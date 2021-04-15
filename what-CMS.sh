@@ -4,7 +4,7 @@
 source modules/vulnx-module.sh
 source modules/wp-scan-module.sh
 source modules/cmsmap-module.sh
-source ipinfo_api.sh
+source api/ipinfo_api.sh
 
 #DEFINE LOGS, DATA FILES
 logsdir="logs"
