@@ -1,8 +1,9 @@
 #! /usr/bin/bash
 
 #SOURCES
-source wp-scan-module.sh
-source cmsmap-module.sh
+source modules/vulnx-module.sh
+source modules/wp-scan-module.sh
+source modules/cmsmap-module.sh
 source ipinfo_api.sh
 
 #DEFINE LOGS, DATA FILES
@@ -114,7 +115,7 @@ function check_drupal_cms(){
 
 function _help(){
     
-    usage="\n\t\t$($BOLD)    Script conceput pentru testarea si scanarea platformelor de tip CMS:\n\t\t   Wordpress, Drupal si Joomla!, impotriva vulnerabilitatilor, integrand\n\t\to serie de utilitare specifice, precum: CMSmap, Droopescan, Joomscan, VulnX $($RESET) \n\n\t\t\t$($BOLD)(c) Stoica Gabriel-Marius <marius_gabriel1998@yahoo.com> $($RESET)\n \nMod de utilizare: ./$(basename "$0") [-h] [http(s)://(www.)site-to-be-scanned.ro/] \n \navand semnificatia: \n \t -h, --help \n \t\tAjutor, arata modul de utilizare \n\t -http \n\t\tTrimite o cerere de tip HTTP catre o tinta si afiseaza\n\t\theader-ul raspunsului, identificand daca optiunile de\n\t\tsecuritate sunt activate sau nu\n\t         -fs, --full-scan\n\t\tRealizeaza scanarea completa a platformei tinta, oferind\n\t\to serie de utilitare specifice, precum: WPScan, droopescan,\n\t\tjoomscan, in functie de tipul CMS-ului identificat\n\t -u URL, --url URL\n\t\tParametru folosit pentru specificarea adresei tinta ce urmeaza a fi scanata \n\t\tSintaxa URL valida: \n \t\thttp(s)://(www.)site-de-scanat.ro sau 192.168.10.0/wordpress\n\t -wh, --web-host\n\t\tOfera informatii aditionale despre platforma scanata si despre\n\t\tfirma de hosting pe care este gazduita"
+    usage="\n\t\t$($BOLD)    Script conceput pentru testarea si scanarea platformelor de tip CMS:\n\t\t   Wordpress, Drupal si Joomla!, impotriva vulnerabilitatilor, integrand\n\t\to serie de utilitare specifice: CMSmap, Droopescan, Joomscan, VulnX $($RESET) \n\n\t\t\t$($BOLD)(c) Stoica Gabriel-Marius <marius_gabriel1998@yahoo.com> $($RESET)\n \nMod de utilizare: ./$(basename "$0") [-h] [http(s)://(www.)site-to-be-scanned.ro/] \n \navand semnificatia: \n \t -h, --help \n \t\tAjutor, arata modul de utilizare \n\t -http \n\t\tTrimite o cerere de tip HTTP catre o tinta si afiseaza\n\t\theader-ul raspunsului, identificand daca optiunile de\n\t\tsecuritate sunt activate sau nu\n\t         -fs, --full-scan\n\t\tRealizeaza scanarea completa a platformei tinta, oferind\n\t\to serie de utilitare specifice, precum: WPScan, droopescan,\n\t\tjoomscan, in functie de tipul CMS-ului identificat\n\t -u URL, --url URL\n\t\tParametru folosit pentru specificarea adresei tinta ce urmeaza a fi scanata \n\t\tSintaxa URL valida: \n \t\thttp(s)://(www.)site-de-scanat.ro sau 192.168.10.0/wordpress\n\t -wh, --web-host\n\t\tOfera informatii aditionale despre platforma scanata si despre\n\t\tfirma de hosting pe care este gazduita"
     $RED
     $BOLD
     cat -e $logo_file
@@ -146,7 +147,7 @@ function _check_for_dependencies(){
 
 function _http_request(){
     
-    echo -e "${INFO}\e[1mTinta scanata: \e[0m"$1
+    echo -e "\n${INFO}\e[1mTinta scanata: \e[0m"$1
     echo -e "${PLUS}Se trimite request-ul HTTP..."
     curl -sLI --url $1 >> $curl_response_file
     
@@ -292,6 +293,7 @@ function main(){
             _help
         else
             $RED
+            $BOLD
             cat -e $logo_file
             $RESET
             
@@ -299,10 +301,10 @@ function main(){
             _print_http_response $domain
             _web_host_informations $domain
             
-            echo -e "\nVerificarea tipului CMS a inceput... \n"
+            echo -e "\n${INFO}$($BOLD)Verificarea tipului CMS a inceput... $($RESET)\n"
             
             temp_name=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1)
-            echo "Scriere cod sursa al paginii in "$temp_name".log"
+            echo "${PLUS}Scriere cod sursa al paginii in "$temp_name".log"
             wget -qnv $domain -O $logsdir/$temp_name".log"
             
             wordpress_check=$(check_wordpress_cms $temp_name $domain)
@@ -319,33 +321,34 @@ function main(){
             then
                 if [ "$wordpress_check" == "not_sure" ]
                 then
-                    echo -e "Versiune CMS identificata partial: Posibil Wordpress\n Puteti rula urmatoarele utilitare pentru testare:\n"
+                    echo -e "${INFO}$($BOLD)Versiune CMS identificata partial: Posibil Wordpress\n${INFO}Puteti rula urmatoarele utilitare pentru testare:\n$($RESET)"
                 else
-                    echo -e "Versiune CMS identificata: $wordpress_check\nUrmatoarele utilitare pot fi folosite pentru testare:\n "
+                    echo -e "${PLUS}$($BOLD)Versiune CMS identificata: $wordpress_check\n${INFO}Urmatoarele utilitare pot fi folosite pentru testare:\n$($RESET) "
                 fi
-                echo -e "1 --> WPScan\n2 --> CMSmap"
-                echo -e "\nFurnizati numarul utilitarului dorit:"
-                read choice
-                echo "Ati introdus:"$choice
+                echo -e "$($BOLD)  [1] --> WPScan\n  [2] --> CMSmap\n  [3] --> VulnX$($RESET)\n"
+                read -p "${INFO}$($BOLD)Furnizati numarul utilitarului dorit: $($RESET)" choice
+                echo -e "\n${PLUS}$($BOLD)Ati introdus:$($RESET)"$choice
                 if [ $choice -eq 1 ]
                 then
                     _wp_scan_module $domain
                 elif [ $choice -eq 2 ]
                 then
                     _cmsmap_module $domain
+                elif [ $choice -eq 3 ]
+                then
+                    _vulnx_module $domain
                 fi
             elif [[ ( "$joomla_check" == "found" ||  $joomla_check == "not_sure" ) ]]
             then
                 if [ $joomla_check == "not_sure" ]
                 then
-                    echo -e "Versiune  CMS identificata partial: Joomla! \n Urmatoarele utilitare pot fi folosite pentru testare:\n"
+                    echo -e "${INFO}$($BOLD)Versiune CMS identificata partial: Joomla!\n${INFO}Urmatoarele utilitare pot fi folosite pentru testare:\n$($RESET)"
                 else
-                    echo -e "Versiune  CMS identificata: Joomla! \n Urmatoarele utilitare pot fi folosite pentru testare:\n"
+                    echo -e "${PLUS}$($BOLD)Versiune CMS identificata: Joomla!\n${INFO}Urmatoarele utilitare pot fi folosite pentru testare:\n$($RESET)"
                 fi
-                echo -e "1 --> joomscan by OWASP\n2--> CMSmap\n"
-                echo -e "Furnizati numarul utilitarului dorit:"
-                read choice
-                echo "Ati introdus: "$choice
+                echo -e "$($BOLD)  [1] --> joomscan by OWASP\n[2]--> CMSmap\n[3] --> VulnX$($RESET)"
+                read -p "${INFO}$($BOLD)Furnizati numarul utilitarului dorit: $($RESET)" choice
+                echo -e "\n${PLUS}$($BOLD)Ati introdus: "$choice
                 if [ $choice -eq 1 ]
                 then
                     cd joomscan/
@@ -353,22 +356,27 @@ function main(){
                 elif [ $choice -eq 2 ]
                 then
                     _cmsmap_module $domain
+                elif [ $choice -eq 3 ]
+                then
+                    _vulnx_module $domain
                 fi
             elif [ "$drupal_check" != "not_found" ]
             then
-                echo -e "Versiune CMS identificata: $drupal_check\nUrmatoarele utilitare pot fi folosite pentru testare:\n "
-                echo -e "1 --> droopescan\n2 --> CMSmap\n"
-                echo -e "Furnizati numarul utilitarului dorit:"
-                read choice
-                echo "Ati introdus: "$choice
+                echo -e "${INFO}$($BOLD)Versiune CMS identificata: $drupal_check\nUrmatoarele utilitare pot fi folosite pentru testare:\n $($RESET)"
+                echo -e "$($BOLD)  [1] --> droopescan\n[2] --> CMSmap\n[3] --> VulnX$($RESET)"
+                read -p "${INFO}$($BOLD)Furnizati numarul utilitarului dorit: $($RESET)"choice
+                echo -e "\n${PLUS}$($BOLD)Ati introdus: $($RESET)"$choice
                 if [ $choice -eq 1 ]
                 then
                     cd droopescan/ && droopescan scan drupal -u $domain
                 elif [ $choice -eq 2 ]
                 then
                     _cmsmap_module $domain
+                elif [ $choice -eq 3 ]
+                then
+                    _vulnx_module $domain
                 fi
-            else echo "Nu am putut identifica versiunea CMS a platformei!"
+            else echo "${MINUS}$($BOLD)Nu am putut identifica versiunea CMS a platformei!$($RESET)"
             fi
         fi
         rm -Rf $logsdir/$temp_name".log"
