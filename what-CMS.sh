@@ -4,6 +4,8 @@
 source modules/vulnx-module.sh
 source modules/wp-scan-module.sh
 source modules/cmsmap-module.sh
+source modules/joomscan-module.sh
+source modules/droopescan-module.sh
 source api/ipinfo_api.sh
 
 #DEFINE LOGS, DATA FILES
@@ -194,7 +196,6 @@ function _web_host_informations(){
     local url=$1
     local domain_name=""
     local domain_ip=""
-    local api_url="https://ipinfo.io"
     
     if [[ $url =~ $regex_ip ]]
     then
@@ -202,9 +203,8 @@ function _web_host_informations(){
     elif [[ $url =~ $regex ]]
     then
         domain_name=$(echo $url | awk -F/ '{print $3}')
-        local host=$(host $domain_name)
-        local response_type=$(echo $host | awk '{print NF}')
-        if [ $response_type -eq 4 ]
+        local host=$(host $domain_name | grep -o '[0-9]\+[.][0-9]\+[.][0-9]\+[.][0-9]\+')
+        if [ ! -z $host ]
         then
             domain_ip=$(echo ${host##* })
             _create_api_request $domain_ip
@@ -218,7 +218,6 @@ function _web_host_informations(){
             _help
         fi
     else
-        echo "aici"
         _help
     fi
     
@@ -346,13 +345,12 @@ function main(){
                 else
                     echo -e "${PLUS}$($BOLD)Versiune CMS identificata: Joomla!\n${INFO}Urmatoarele utilitare pot fi folosite pentru testare:\n$($RESET)"
                 fi
-                echo -e "$($BOLD)  [1] --> joomscan by OWASP\n[2]--> CMSmap\n[3] --> VulnX$($RESET)"
+                echo -e "$($BOLD)  [1] --> joomscan by OWASP\n  [2]--> CMSmap\n  [3] --> VulnX$($RESET)"
                 read -p "${INFO}$($BOLD)Furnizati numarul utilitarului dorit: $($RESET)" choice
                 echo -e "\n${PLUS}$($BOLD)Ati introdus: "$choice
                 if [ $choice -eq 1 ]
                 then
-                    cd joomscan/
-                    perl joomscan.pl -u $domain -r
+                    _joomscan_module $domain
                 elif [ $choice -eq 2 ]
                 then
                     _cmsmap_module $domain
@@ -362,13 +360,13 @@ function main(){
                 fi
             elif [ "$drupal_check" != "not_found" ]
             then
-                echo -e "${INFO}$($BOLD)Versiune CMS identificata: $drupal_check\nUrmatoarele utilitare pot fi folosite pentru testare:\n $($RESET)"
-                echo -e "$($BOLD)  [1] --> droopescan\n[2] --> CMSmap\n[3] --> VulnX$($RESET)"
-                read -p "${INFO}$($BOLD)Furnizati numarul utilitarului dorit: $($RESET)"choice
+                echo -e "${INFO}$($BOLD)Versiune CMS identificata: $drupal_check\n${INFO}Urmatoarele utilitare pot fi folosite pentru testare:\n $($RESET)"
+                echo -e "$($BOLD)  [1] --> droopescan\n  [2] --> CMSmap\n  [3] --> VulnX$($RESET)\n"
+                read -p "${INFO}$($BOLD)Furnizati numarul utilitarului dorit: $($RESET)" choice
                 echo -e "\n${PLUS}$($BOLD)Ati introdus: $($RESET)"$choice
                 if [ $choice -eq 1 ]
                 then
-                    cd droopescan/ && droopescan scan drupal -u $domain
+                    _droopescan_module $domain
                 elif [ $choice -eq 2 ]
                 then
                     _cmsmap_module $domain
