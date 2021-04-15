@@ -2,7 +2,7 @@ function _vulnx_module(){
     local domain=$1
     cd vulnx/
 
-    echo -e "\n${INFO}$($BOLD)Sunt disponibile urmatoarele optiuni:\n\n  [1] --> Scanare port-uri\n  [2] --> Testare vulnerabilitati posibile\n  [3] --> Afisare informatii platforma CMS(tema, plugin-uri, versiune...)\n  [4] --> Afisare informatii subdomenii\n\n$($RESET)"
+    echo -e "\n${INFO}$($BOLD)Sunt disponibile urmatoarele optiuni:\n\n  [1] --> Scanare port-uri\n  [2] --> Testare vulnerabilitati posibile\n  [3] --> Afisare informatii platforma CMS(tema, plugin-uri, versiune...)\n  [4] --> Afisare informatii subdomenii\n$($RESET)"
     read -p "${INFO}$($BOLD)Introduceti optiunea aleasa: $($RESET)" tip_atac
     
     if [ $tip_atac -eq 1 ]
