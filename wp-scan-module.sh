@@ -1,9 +1,8 @@
 function _wp_scan_module(){
     local domain=$1
 
-    echo -e "\nAlegeti tipul de atac dorit:\n 1 --> Listarea utilizatorilor\n 2 --> Atac de tip brute force identificare parole utilizatori \n 3 --> Listarea tuturor plugin-urilor\n 4 --> Listarea plugin-urilor vulnerabile\n 5 --> Listarea temelor instalate care prezinta vulnerabilitati\n 6 --> Cautarea fisierelor de backup pentru configurari"
-    read tip_atac
-    echo "Ati ales: "$tip_atac
+    echo -e "\n${INFO}$($BOLD)Sunt disponibile urmatoarele optiuni:\n\n  [1] --> Listarea utilizatorilor\n  [2] --> Atac de tip brute force identificare parole utilizatori\n  [3] --> Listarea tuturor plugin-urilor\n  [4] --> Listarea plugin-urilor vulnerabile\n  [5] --> Listarea temelor instalate care prezinta vulnerabilitati\n  [6] --> Cautarea fisierelor de backup pentru configurari $($RESET)\n"
+    read -p "${INFO}$($BOLD)Introduceti optiunea aleasa: $($RESET)" tip_atac
     if [ $tip_atac -eq 1 ]
     then
         wpscan --url $domain --api-token tGDh4yker9qe4Scp1IaionL0JmVq1Dna6EjCTzCl8Qg --random-user-agent --ignore-main-redirect --no-banner --no-update -e u
@@ -12,8 +11,7 @@ function _wp_scan_module(){
         wpscan --url $domain --api-token tGDh4yker9qe4Scp1IaionL0JmVq1Dna6EjCTzCl8Qg --random-user-agent --ignore-main-redirect --no-banner --no-update -e ap
     elif [ $tip_atac -eq 2 ]
     then
-        echo -e "Introduceti username-ul/username-urile despartite prin ',':"
-        read users
+        read -p "${INFO}$($BOLD)Introduceti username-ul/username-urile despartite prin ',': $($RESET)" users
         if [ -z "$users" ]
         then
             echo -e "$WARNING Camp completat incorect!\n Pentru ajutor utilizati ./what-CMS.sh -help"
