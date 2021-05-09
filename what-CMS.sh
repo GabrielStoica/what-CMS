@@ -117,7 +117,7 @@ function check_drupal_cms(){
 
 function _help(){
     
-    usage="\n\t\t$($BOLD)    Script conceput pentru testarea si scanarea platformelor de tip CMS:\n\t\t   Wordpress, Drupal si Joomla!, impotriva vulnerabilitatilor, integrand\n\t\to serie de utilitare specifice: CMSmap, Droopescan, Joomscan, VulnX $($RESET) \n\n\t\t\t$($BOLD)(c) Stoica Gabriel-Marius <marius_gabriel1998@yahoo.com> $($RESET)\n \nMod de utilizare: ./$(basename "$0") [-h] [http(s)://(www.)site-to-be-scanned.ro/] \n \navand semnificatia: \n \t -h, --help \n \t\tAjutor, arata modul de utilizare \n\t -http \n\t\tTrimite o cerere de tip HTTP catre o tinta si afiseaza\n\t\theader-ul raspunsului, identificand daca optiunile de\n\t\tsecuritate sunt activate sau nu\n\t         -fs, --full-scan\n\t\tRealizeaza scanarea completa a platformei tinta, oferind\n\t\to serie de utilitare specifice, precum: WPScan, droopescan,\n\t\tjoomscan, in functie de tipul CMS-ului identificat\n\t -u URL, --url URL\n\t\tParametru folosit pentru specificarea adresei tinta ce urmeaza a fi scanata \n\t\tSintaxa URL valida: \n \t\thttp(s)://(www.)site-de-scanat.ro sau 192.168.10.0/wordpress\n\t -wh, --web-host\n\t\tOfera informatii aditionale despre platforma scanata si despre\n\t\tfirma de hosting pe care este gazduita"
+    usage="\n\t\t$($BOLD)    Script conceput pentru testarea si scanarea platformelor de tip CMS:\n\t\t   Wordpress, Drupal si Joomla!, impotriva vulnerabilitatilor, integrand\n\t\to serie de utilitare specifice: CMSmap, Droopescan, Joomscan, VulnX $($RESET) \n\n\t\t\t$($BOLD)(c) Stoica Gabriel-Marius <marius_gabriel1998@yahoo.com> $($RESET)\n \nMod de utilizare: ./$(basename "$0") [-h] [OPTIONS] -u http(s)://(www.)site-to-be-scanned.ro/ \n \navand semnificatia: \n \t -h, --help \n \t\tAjutor, arata modul de utilizare \n\t -http \n\t\tTrimite o cerere de tip HTTP catre o tinta si afiseaza\n\t\theader-ul raspunsului, identificand daca optiunile de\n\t\tsecuritate sunt activate sau nu\n\t         -fs, --full-scan\n\t\tRealizeaza scanarea completa a platformei tinta, oferind\n\t\to serie de utilitare specifice, precum: WPScan, droopescan,\n\t\tjoomscan, in functie de tipul CMS-ului identificat\n\t -u URL, --url URL\n\t\tParametru folosit pentru specificarea adresei tinta ce urmeaza a fi scanata \n\t\tSintaxa URL valida: \n \t\thttp(s)://(www.)site-de-scanat.ro sau 192.168.10.0/wordpress\n\t -wh, --web-host\n\t\tOfera informatii aditionale despre platforma scanata si despre\n\t\tfirma de hosting pe care este gazduita"
     $RED
     $BOLD
     cat -e $logo_file
@@ -259,7 +259,7 @@ function main(){
                     shift;
                     domain=${!arg};
                 ;;
-                -wb|--web-host)
+                -wh|--web-host)
                     web_host_mode=1;
                 ;;
                 *)
