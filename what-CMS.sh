@@ -298,7 +298,6 @@ function main(){
             
             _http_request $domain
             _print_http_response $domain
-            _web_host_informations $domain
             
             echo -e "\n${INFO}$($BOLD)Verificarea tipului CMS a inceput... $($RESET)\n"
             
