@@ -15,7 +15,7 @@ Pentru a putea functiona la parametrii optimi, scriptul are nevoie de urmatoarel
 - https://github.com/OWASP/joomscan
 - https://github.com/Dionach/CMSmap
 - https://github.com/droope/droopescan
-- https://github.com/Dionach/CMSmap
+- https://github.com/wpscanteam/wpscan
 - https://github.com/anouarbensaad/vulnx
 
 ## Help mode
